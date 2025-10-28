@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordenador de Matrículas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-ordenar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-ordenar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-limpiar {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-limpiar:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-copiar {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-copiar:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .output-section {
+            margin-top: 30px;
+        }
+
+        .resultado {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .resultado table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .resultado thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .resultado th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .resultado td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .resultado tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .resultado tbody tr:hover {
+            background-color: #f0f4ff;
+        }
+
+        .resultado tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .col-nombre {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .col-matricula {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.05em;
+            text-align: center;
+            width: 150px;
+        }
+
+        .resultado th:last-child {
+            text-align: center;
+        }
+
+        .stats {
+            background: #e8eaf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .mensaje {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .mensaje.exito {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .mensaje.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .ejemplo {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .ejemplo h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+
+        .ejemplo code {
+            display: block;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+            white-space: pre-line;
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .resultado th,
+            .resultado td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            .col-matricula {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Ordenador de Matrículas</h1>
+            <p>Organiza tu lista de estudiantes por número de matrícula de forma automática</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <label for="listaInput">Ingresa la lista de nombres y matrículas:</label>
+                <div class="ejemplo">
+                    <h3>Formatos aceptados:</h3>
+                    <code>Nombre Apellido, Matricula
+Nombre Apellido Matricula
+
+Ejemplo:
+Juan Pérez García, 123456
+María López Rodríguez 789012</code>
+                </div>
+                <textarea 
+                    id="listaInput" 
+                    placeholder="Pega aquí tu lista. Formatos aceptados:&#10;- Con coma: Nombre, Matricula&#10;- Sin coma: Nombre Matricula&#10;&#10;Ejemplo:&#10;Juan Pérez, 123456&#10;María García 789012"
+                ></textarea>
+
+                <div class="button-group">
+                    <button class="btn-ordenar" onclick="ordenarLista()">
+                        🔄 Ordenar por Matrícula
+                    </button>
+                    <button class="btn-limpiar" onclick="limpiarCampos()">
+                        🗑️ Limpiar
+                    </button>
+                </div>
+            </div>
+
+            <div id="statsSection" class="stats" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalEstudiantes">0</div>
+                    <div class="stat-label">Total de Estudiantes</div>
+                </div>
+            </div>
+
+            <div id="mensaje" class="mensaje"></div>
+
+            <div class="output-section" id="outputSection" style="display: none;">
+                <label>Resultado ordenado:</label>
+                <div class="resultado" id="resultado"></div>
+                <button class="btn-copiar" onclick="copiarResultado()" style="margin-top: 15px; width: 100%;">
+                    📋 Copiar Resultado
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let datosOrdenados = [];
+
+        function extraerNumeroMatricula(matricula) {
+            // Extraer solo los dígitos de la matrícula
+            const soloNumeros = matricula.replace(/\D/g, '');
+            return parseInt(soloNumeros) || 0;
+        }
+
+        function ordenarLista() {
+            const input = document.getElementById('listaInput').value.trim();
+            
+            if (!input) {
+                mostrarMensaje('Por favor ingresa una lista de nombres y matrículas.', 'error');
+                return;
+            }
+
+            // Dividir por líneas
+            const lineas = input.split('\n').filter(linea => linea.trim() !== '');
+            
+            if (lineas.length === 0) {
+                mostrarMensaje('La lista está vacía.', 'error');
+                return;
+            }
+
+            // Procesar cada línea
+            const datos = [];
+            let errores = 0;
+
+            lineas.forEach((linea, index) => {
+                let nombre, matricula;
+                
+                // Buscar la última coma para separar nombre de matrícula
+                const ultimaComa = linea.lastIndexOf(',');
+                
+                if (ultimaComa !== -1) {
+                    // Formato con coma: "Nombre, Matrícula"
+                    nombre = linea.substring(0, ultimaComa).trim();
+                    matricula = linea.substring(ultimaComa + 1).trim();
+                } else {
+                    // Formato sin coma: "Nombre Matrícula" - usar el último espacio
+                    const ultimoEspacio = linea.lastIndexOf(' ');
+                    
+                    if (ultimoEspacio === -1) {
+                        console.warn(`Línea ${index + 1} sin formato correcto: ${linea}`);
+                        errores++;
+                        return;
+                    }
+                    
+                    nombre = linea.substring(0, ultimoEspacio).trim();
+                    matricula = linea.substring(ultimoEspacio + 1).trim();
+                }
+
+                if (nombre && matricula) {
+                    datos.push({
+                        nombre: nombre,
+                        matriculaOriginal: matricula,
+                        matriculaNumero: extraerNumeroMatricula(matricula)
+                    });
+                }
+            });
+
+            if (datos.length === 0) {
+                mostrarMensaje('No se encontraron datos válidos en el formato correcto.', 'error');
+                return;
+            }
+
+            // Ordenar por número de matrícula
+            datosOrdenados = datos.sort((a, b) => a.matriculaNumero - b.matriculaNumero);
+
+            // Mostrar resultados
+            mostrarResultados(datosOrdenados);
+            mostrarEstadisticas(datosOrdenados);
+            
+            if (errores > 0) {
+                mostrarMensaje(`Lista ordenada exitosamente. ${errores} línea(s) ignorada(s) por formato incorrecto.`, 'exito');
+            } else {
+                mostrarMensaje('¡Lista ordenada exitosamente!', 'exito');
+            }
+        }
+
+        function mostrarResultados(datos) {
+            const resultadoDiv = document.getElementById('resultado');
+            
+            let tablaHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Matrícula</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            datos.forEach((item) => {
+                tablaHTML += `
+                    <tr>
+                        <td class="col-nombre">${item.nombre}</td>
+                        <td class="col-matricula">${item.matriculaOriginal}</td>
+                    </tr>
+                `;
+            });
+
+            tablaHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            resultadoDiv.innerHTML = tablaHTML;
+            document.getElementById('outputSection').style.display = 'block';
+        }
+
+        function mostrarEstadisticas(datos) {
+            if (datos.length === 0) return;
+
+            document.getElementById('totalEstudiantes').textContent = datos.length;
+            document.getElementById('statsSection').style.display = 'flex';
+        }
+
+        function copiarResultado() {
+            const texto = datosOrdenados
+                .map(item => `${item.nombre}, ${item.matriculaOriginal}`)
+                .join('\n');
+
+            navigator.clipboard.writeText(texto).then(() => {
+                mostrarMensaje('¡Resultado copiado al portapapeles!', 'exito');
+            }).catch(err => {
+                mostrarMensaje('Error al copiar al portapapeles.', 'error');
+            });
+        }
+
+        function limpiarCampos() {
+            document.getElementById('listaInput').value = '';
+            document.getElementById('resultado').innerHTML = '';
+            document.getElementById('outputSection').style.display = 'none';
+            document.getElementById('statsSection').style.display = 'none';
+            document.getElementById('mensaje').style.display = 'none';
+            datosOrdenados = [];
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = texto;
+            mensajeDiv.className = `mensaje ${tipo}`;
+            mensajeDiv.style.display = 'block';
+
+            setTimeout(() => {
+                mensajeDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
