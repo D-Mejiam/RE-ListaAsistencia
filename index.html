@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ordenador de Matrículas</title>
+    <title>Control de Asistencia</title>
     <style>
         * {
             margin: 0;
@@ -11,482 +12,1730 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+```
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .main-header {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+
+    .main-header h1 {
+        color: #667eea;
+        font-size: 32px;
+        margin-bottom: 20px;
+    }
+
+    .global-counter {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 40px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .global-counter:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .global-counter:active {
+        transform: scale(0.98);
+    }
+
+    .global-counter-label {
+        font-size: 14px;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+
+    .global-counter-value {
+        font-size: 64px;
+        font-weight: bold;
+    }
+
+    .clear-all-button {
+        margin-top: 15px;
+        padding: 12px 30px;
+        background: #ff6b6b;
+        border: none;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .clear-all-button:hover {
+        background: #ff5252;
+        transform: scale(1.05);
+    }
+
+    .panels-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .panel {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        padding: 25px 30px;
+        color: white;
+        text-align: center;
+    }
+
+    .panel-header.entrada {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    }
+
+    .panel-header.salida {
+        background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+    }
+
+    .panel-header.bonos {
+        background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    }
+
+    .panel-header h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .input-section {
+        padding: 25px 30px;
+        background: #f8f9ff;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        color: #555;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .code-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border: 3px solid #667eea;
+        border-radius: 8px;
+        text-align: center;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .code-input:focus {
+        outline: none;
+        border-color: #764ba2;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-around;
+        padding: 20px 30px;
+        background: #fff;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: #666;
+        margin-top: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .list-header {
+        display: grid;
+        grid-template-columns: 50px 1fr 120px 100px;
+        gap: 10px;
+        padding: 12px 30px;
+        background: #f0f4ff;
+        font-weight: 600;
+        color: #667eea;
+        border-bottom: 2px solid #e0e0e0;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .list-header-bonos {
+        grid-template-columns: 50px 1fr 120px 150px;
+    }
+
+    .records-list {
+        max-height: 400px;
+        overflow-y: auto;
+        background: white;
+    }
+
+    .record-item {
+        display: grid;
+        grid-template-columns: 50px 1fr 120px 100px;
+        gap: 10px;
+        padding: 12px 30px;
+        border-bottom: 1px solid #e0e0e0;
+        transition: background 0.2s ease;
+        animation: slideIn 0.3s ease;
+    }
+
+    .record-item-bonos {
+        grid-template-columns: 50px 1fr 120px 150px;
+    }
+
+    .record-item:hover {
+        background: #f8f9ff;
+    }
+
+    .record-number {
+        font-weight: bold;
+        color: #667eea;
+        font-size: 16px;
+    }
+
+    .record-name {
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .record-matricula {
+        color: #666;
+        font-family: monospace;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .record-time {
+        color: #999;
+        font-size: 13px;
+        text-align: right;
+    }
+
+    .empty-state {
+        padding: 40px 30px;
+        text-align: center;
+        color: #999;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 20px 30px;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        animation: slideInRight 0.3s ease;
+        z-index: 1000;
+    }
+
+    .alert.success {
+        background: #4caf50;
+    }
+
+    .alert.error {
+        background: #f44336;
+    }
+
+    .alert.warning {
+        background: #ff9800;
+    }
+
+    /* Modal de opciones */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 2000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: scaleIn 0.3s ease;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .modal-header h3 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .modal-name {
+        font-size: 18px;
+        color: #667eea;
+        font-weight: 600;
+    }
+
+    .modal-matricula {
+        font-size: 14px;
+        color: #999;
+        font-family: monospace;
+        margin-top: 5px;
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .turno-list {
+        max-height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+    }
+
+    .turno-item {
+        display: grid;
+        grid-template-columns: 40px 1fr 130px;
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9ff;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .turno-number {
+        font-weight: bold;
+        color: #667eea;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .turno-name {
+        color: #333;
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    .turno-matricula {
+        color: #666;
+        font-family: monospace;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-align: right;
+    }
+
+    .turno-empty {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    .turno-empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+    }
+
+    .turno-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .turno-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .turno-list::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 4px;
+    }
+
+    .turno-list::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
+    }
+
+    .option-button {
+        padding: 20px;
+        border: 3px solid #667eea;
+        background: white;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #667eea;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .option-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .option-button.herramientas {
+        border-color: #2196F3;
+        color: #2196F3;
+    }
+
+    .option-button.herramientas:hover {
+        background: #2196F3;
+        color: white;
+    }
+
+    .option-button.acolchado {
+        border-color: #4caf50;
+        color: #4caf50;
+    }
+
+    .option-button.acolchado:hover {
+        background: #4caf50;
+        color: white;
+    }
+
+    .option-button.simeprodee {
+        border-color: #ff9800;
+        color: #ff9800;
+    }
+
+    .option-button.simeprodee:hover {
+        background: #ff9800;
+        color: white;
+    }
+
+    .option-button.montaje {
+        border-color: #9c27b0;
+        color: #9c27b0;
+    }
+
+    .option-button.montaje:hover {
+        background: #9c27b0;
+        color: white;
+    }
+
+    .option-button.comunicacion {
+        border-color: #03a9f4;
+        color: #03a9f4;
+    }
+
+    .option-button.comunicacion:hover {
+        background: #03a9f4;
+        color: white;
+    }
+
+    .option-button.maquinas {
+        border-color: #fbc02d;
+        color: #fbc02d;
+    }
+
+    .option-button.maquinas:hover {
+        background: #fbc02d;
+        color: white;
+    }
+
+    .option-button.lista-asistencia {
+        border-color: #e91e63;
+        color: #e91e63;
+    }
+
+    .option-button.lista-asistencia:hover {
+        background: #e91e63;
+        color: white;
+    }
+
+    .option-button.collarines {
+        border-color: #009688;
+        color: #009688;
+    }
+
+    .option-button.collarines:hover {
+        background: #009688;
+        color: white;
+    }
+
+    .modal-cancel {
+        width: 100%;
+        padding: 15px;
+        background: #f5f5f5;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .modal-cancel:hover {
+        background: #e0e0e0;
+    }
+
+    .bono-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .bono-badge.herramientas {
+        background: #e3f2fd;
+        color: #2196F3;
+    }
+
+    .bono-badge.acolchado {
+        background: #e8f5e9;
+        color: #4caf50;
+    }
+
+    .bono-badge.simeprodee {
+        background: #fff3e0;
+        color: #ff9800;
+    }
+
+    .bono-badge.montaje {
+        background: #f3e5f5;
+        color: #9c27b0;
+    }
+
+    .bono-badge.comunicacion {
+        background: #e1f5fe;
+        color: #03a9f4;
+    }
+
+    .bono-badge.maquinas {
+        background: #fff9c4;
+        color: #fbc02d;
+    }
+
+    .bono-badge.lista-asistencia {
+        background: #fce4ec;
+        color: #e91e63;
+    }
+
+    .bono-badge.collarines {
+        background: #e0f2f1;
+        color: #009688;
+    }
+
+    .bonos-full {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .panel-header.sanciones {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+
+    .sancion-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .sancion-badge.casco {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .sancion-badge.lentes {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .sancion-badge.credencial {
+        background: #fce4ec;
+        color: #c2185b;
+    }
+
+    .sancion-badge.tapones {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .sancion-badge.chaleco {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .sancion-badge.cutter {
+        background: #e0f2f1;
+        color: #00695c;
+    }
+
+    .option-button.casco {
+        border-color: #c62828;
+        color: #c62828;
+    }
+
+    .option-button.casco:hover {
+        background: #c62828;
+        color: white;
+    }
+
+    .option-button.lentes {
+        border-color: #e65100;
+        color: #e65100;
+    }
+
+    .option-button.lentes:hover {
+        background: #e65100;
+        color: white;
+    }
+
+    .option-button.credencial {
+        border-color: #c2185b;
+        color: #c2185b;
+    }
+
+    .option-button.credencial:hover {
+        background: #c2185b;
+        color: white;
+    }
+
+    .option-button.tapones {
+        border-color: #7b1fa2;
+        color: #7b1fa2;
+    }
+
+    .option-button.tapones:hover {
+        background: #7b1fa2;
+        color: white;
+    }
+
+    .option-button.chaleco {
+        border-color: #2e7d32;
+        color: #2e7d32;
+    }
+
+    .option-button.chaleco:hover {
+        background: #2e7d32;
+        color: white;
+    }
+
+    .option-button.cutter {
+        border-color: #00695c;
+        color: #00695c;
+    }
+
+    .option-button.cutter:hover {
+        background: #00695c;
+        color: white;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+        to {
+            opacity: 1;
+            transform: translateX(0);
         }
+    }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100px);
         }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
+        to {
+            opacity: 1;
+            transform: translateX(0);
         }
+    }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
         }
-
-        .content {
-            padding: 30px;
+        to {
+            opacity: 1;
+            transform: scale(1);
         }
+    }
 
-        .input-section {
-            margin-bottom: 30px;
+    .records-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .records-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .records-list::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 4px;
+    }
+
+    .records-list::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
+    }
+
+    @media (max-width: 1200px) {
+        .panels-container {
+            grid-template-columns: 1fr;
         }
+    }
+</style>
+```
 
-        label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 200px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            resize: vertical;
-            transition: border-color 0.3s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px 30px;
-            font-size: 1.1em;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-ordenar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-ordenar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-limpiar {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-limpiar:hover {
-            background: #e0e0e0;
-        }
-
-        .btn-copiar {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-copiar:hover {
-            background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .output-section {
-            margin-top: 30px;
-        }
-
-        .resultado {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 200px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .resultado table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .resultado thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .resultado th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .resultado td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .resultado tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        .resultado tbody tr:hover {
-            background-color: #f0f4ff;
-        }
-
-        .resultado tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .col-nombre {
-            color: #333;
-            font-weight: 500;
-        }
-
-        .col-matricula {
-            color: #667eea;
-            font-weight: 700;
-            font-size: 1.05em;
-            text-align: center;
-            width: 150px;
-        }
-
-        .resultado th:last-child {
-            text-align: center;
-        }
-
-        .stats {
-            background: #e8eaf6;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-        }
-
-        .stat-item {
-            flex: 1;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-
-        .mensaje {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .mensaje.exito {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #10b981;
-        }
-
-        .mensaje.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #ef4444;
-        }
-
-        .ejemplo {
-            background: #fef3c7;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-left: 4px solid #f59e0b;
-        }
-
-        .ejemplo h3 {
-            color: #92400e;
-            margin-bottom: 10px;
-        }
-
-        .ejemplo code {
-            display: block;
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            margin-top: 10px;
-            white-space: pre-line;
-        }
-
-        @media (max-width: 768px) {
-            .button-group {
-                flex-direction: column;
-            }
-
-            .stats {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .resultado th,
-            .resultado td {
-                padding: 10px;
-                font-size: 0.9em;
-            }
-
-            .col-matricula {
-                width: 100px;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📋 Ordenador de Matrículas</h1>
-            <p>Organiza tu lista de estudiantes por número de matrícula de forma automática</p>
+        <div class="main-header">
+            <h1>🎓 Sistema de Control de Asistencia</h1>
+
+```
+        <div class="global-counter" id="globalCounterBtn" title="Haz clic para ver quiénes están en turno">
+            <div class="global-counter-label">Personal Dentro del Turno 👁️</div>
+            <div class="global-counter-value" id="globalCounter">0</div>
+        </div>
+        
+        <div>
+            <button class="clear-all-button" id="downloadButton" style="background: #4caf50; margin-right: 10px;">
+                📥 Descargar Registros (CSV)
+            </button>
+            <button class="clear-all-button" id="clearAllButton">
+                🗑️ Limpiar Todos los Registros
+            </button>
+        </div>
+    </div>
+
+    <div class="panels-container">
+        <!-- Panel de Entrada -->
+        <div class="panel">
+            <div class="panel-header entrada">
+                <h2>✅ ENTRADA</h2>
+                <div style="opacity: 0.9;">Registro de ingreso de personal</div>
+            </div>
+            
+            <div class="input-section">
+                <label for="entradaInput">Escanea o ingresa la matrícula:</label>
+                <input 
+                    type="text" 
+                    id="entradaInput" 
+                    class="code-input"
+                    placeholder="Matrícula..." 
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="entradaTotal">0</div>
+                    <div class="stat-label">Total Entradas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="entradaHoy">0</div>
+                    <div class="stat-label">Hoy</div>
+                </div>
+            </div>
+
+            <div class="list-header">
+                <div>#</div>
+                <div>Nombre</div>
+                <div>Matrícula</div>
+                <div>Hora</div>
+            </div>
+
+            <div class="records-list" id="entradaList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div>Sin registros de entrada</div>
+                </div>
+            </div>
         </div>
 
-        <div class="content">
+        <!-- Panel de Salida -->
+        <div class="panel">
+            <div class="panel-header salida">
+                <h2>🚪 SALIDA</h2>
+                <div style="opacity: 0.9;">Registro de salida de personal</div>
+            </div>
+            
             <div class="input-section">
-                <label for="listaInput">Ingresa la lista de nombres y matrículas:</label>
-                <div class="ejemplo">
-                    <h3>Formatos aceptados:</h3>
-                    <code>Nombre Apellido, Matricula
-Nombre Apellido Matricula
-
-Ejemplo:
-Juan Pérez García, 123456
-María López Rodríguez 789012</code>
-                </div>
-                <textarea 
-                    id="listaInput" 
-                    placeholder="Pega aquí tu lista. Formatos aceptados:&#10;- Con coma: Nombre, Matricula&#10;- Sin coma: Nombre Matricula&#10;&#10;Ejemplo:&#10;Juan Pérez, 123456&#10;María García 789012"
-                ></textarea>
-
-                <div class="button-group">
-                    <button class="btn-ordenar" onclick="ordenarLista()">
-                        🔄 Ordenar por Matrícula
-                    </button>
-                    <button class="btn-limpiar" onclick="limpiarCampos()">
-                        🗑️ Limpiar
-                    </button>
-                </div>
+                <label for="salidaInput">Escanea o ingresa la matrícula:</label>
+                <input 
+                    type="text" 
+                    id="salidaInput" 
+                    class="code-input"
+                    placeholder="Matrícula..." 
+                    autocomplete="off"
+                >
             </div>
 
-            <div id="statsSection" class="stats" style="display: none;">
+            <div class="stats">
                 <div class="stat-item">
-                    <div class="stat-number" id="totalEstudiantes">0</div>
-                    <div class="stat-label">Total de Estudiantes</div>
+                    <div class="stat-value" id="salidaTotal">0</div>
+                    <div class="stat-label">Total Salidas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="salidaHoy">0</div>
+                    <div class="stat-label">Hoy</div>
                 </div>
             </div>
 
-            <div id="mensaje" class="mensaje"></div>
+            <div class="list-header">
+                <div>#</div>
+                <div>Nombre</div>
+                <div>Matrícula</div>
+                <div>Hora</div>
+            </div>
 
-            <div class="output-section" id="outputSection" style="display: none;">
-                <label>Resultado ordenado:</label>
-                <div class="resultado" id="resultado"></div>
-                <button class="btn-copiar" onclick="copiarResultado()" style="margin-top: 15px; width: 100%;">
-                    📋 Copiar Resultado
-                </button>
+            <div class="records-list" id="salidaList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div>Sin registros de salida</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        let datosOrdenados = [];
+    <!-- Panel de Bonos (Full Width) -->
+    <div class="bonos-full">
+        <div class="panel-header bonos">
+            <h2>🎁 BONOS</h2>
+            <div style="opacity: 0.9;">Registro de bonos para el personal</div>
+        </div>
+        
+        <div class="input-section">
+            <label for="bonosInput">Escanea o ingresa la matrícula para asignar bono:</label>
+            <input 
+                type="text" 
+                id="bonosInput" 
+                class="code-input"
+                placeholder="Matrícula..." 
+                autocomplete="off"
+            >
+        </div>
 
-        function extraerNumeroMatricula(matricula) {
-            // Extraer solo los dígitos de la matrícula
-            const soloNumeros = matricula.replace(/\D/g, '');
-            return parseInt(soloNumeros) || 0;
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="bonosTotal">0</div>
+                <div class="stat-label">Total Bonos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosHerramientas">0</div>
+                <div class="stat-label">Herramientas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosAcolchado">0</div>
+                <div class="stat-label">Acolchado</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosSimeprodee">0</div>
+                <div class="stat-label">Simeprodee</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosMontaje">0</div>
+                <div class="stat-label">Montaje</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosComunicacion">0</div>
+                <div class="stat-label">Comunicación</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosMaquinas">0</div>
+                <div class="stat-label">Máquinas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosListaAsistencia">0</div>
+                <div class="stat-label">Lista Asistencia</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bonosCollarines">0</div>
+                <div class="stat-label">Collarines</div>
+            </div>
+        </div>
+
+        <div class="list-header list-header-bonos">
+            <div>#</div>
+            <div>Nombre</div>
+            <div>Matrícula</div>
+            <div>Tipo de Bono</div>
+        </div>
+
+        <div class="records-list" id="bonosList">
+            <div class="empty-state">
+                <div class="empty-state-icon">🎁</div>
+                <div>Sin registros de bonos</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de Sanciones (Full Width) -->
+    <div class="bonos-full">
+        <div class="panel-header sanciones">
+            <h2>⚠️ SANCIONES</h2>
+            <div style="opacity: 0.9;">Registro de sanciones de seguridad</div>
+        </div>
+        
+        <div class="input-section">
+            <label for="sancionesInput">Escanea o ingresa la matrícula para registrar sanción:</label>
+            <input 
+                type="text" 
+                id="sancionesInput" 
+                class="code-input"
+                placeholder="Matrícula..." 
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesTotal">0</div>
+                <div class="stat-label">Total Sanciones</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesCasco">0</div>
+                <div class="stat-label">Casco</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesLentes">0</div>
+                <div class="stat-label">Lentes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesCredencial">0</div>
+                <div class="stat-label">Credencial</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesTapones">0</div>
+                <div class="stat-label">Tapones</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesChaleco">0</div>
+                <div class="stat-label">Chaleco SS</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="sancionesCutter">0</div>
+                <div class="stat-label">Cutter</div>
+            </div>
+        </div>
+
+        <div class="list-header list-header-bonos">
+            <div>#</div>
+            <div>Nombre</div>
+            <div>Matrícula</div>
+            <div>Tipo de Sanción</div>
+        </div>
+
+        <div class="records-list" id="sancionesList">
+            <div class="empty-state">
+                <div class="empty-state-icon">⚠️</div>
+                <div>Sin registros de sanciones</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de selección de bono -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Selecciona el tipo de bono</h3>
+            <div class="modal-name" id="modalName"></div>
+            <div class="modal-matricula" id="modalMatricula"></div>
+        </div>
+        
+        <div class="options-grid">
+            <button class="option-button herramientas" data-tipo="herramientas">
+                🔧 Herramientas
+            </button>
+            <button class="option-button acolchado" data-tipo="acolchado">
+                🛏️ Acolchado
+            </button>
+            <button class="option-button simeprodee" data-tipo="simeprodee">
+                🏢 Simeprodee
+            </button>
+            <button class="option-button montaje" data-tipo="montaje">
+                🔨 Montaje para Voluntarios
+            </button>
+            <button class="option-button comunicacion" data-tipo="comunicacion">
+                📢 Comunicación
+            </button>
+            <button class="option-button maquinas" data-tipo="maquinas">
+                ⚙️ Máquinas
+            </button>
+            <button class="option-button lista-asistencia" data-tipo="lista-asistencia">
+                📋 Lista de Asistencia
+            </button>
+            <button class="option-button collarines" data-tipo="collarines">
+                🎽 Collarines
+            </button>
+        </div>
+        
+        <button class="modal-cancel" id="modalCancel">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal de personas en turno -->
+<div class="modal-overlay" id="turnoModalOverlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Personal Dentro del Turno</h3>
+            <div style="color: #667eea; font-size: 18px; margin-top: 10px;">
+                <span id="turnoModalCount">0</span> personas actualmente
+            </div>
+        </div>
+        
+        <div class="turno-list" id="turnoList">
+            <div class="turno-empty">
+                <div class="turno-empty-icon">👥</div>
+                <div>No hay personal en turno</div>
+            </div>
+        </div>
+        
+        <button class="modal-cancel" id="turnoModalCancel">Cerrar</button>
+    </div>
+</div>
+
+<!-- Modal de selección de sanción -->
+<div class="modal-overlay" id="sancionModalOverlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Selecciona el tipo de sanción</h3>
+            <div class="modal-name" id="sancionModalName"></div>
+            <div class="modal-matricula" id="sancionModalMatricula"></div>
+        </div>
+        
+        <div class="options-grid">
+            <button class="option-button casco" data-tipo="casco">
+                🪖 Casco
+            </button>
+            <button class="option-button lentes" data-tipo="lentes">
+                🥽 Lentes
+            </button>
+            <button class="option-button credencial" data-tipo="credencial">
+                🪪 Credencial
+            </button>
+            <button class="option-button tapones" data-tipo="tapones">
+                🎧 Tapones de Oído
+            </button>
+            <button class="option-button chaleco" data-tipo="chaleco">
+                🦺 Chaleco de SS
+            </button>
+            <button class="option-button cutter" data-tipo="cutter">
+                🔪 Cutter
+            </button>
+        </div>
+        
+        <button class="modal-cancel" id="sancionModalCancel">Cancelar</button>
+    </div>
+</div>
+
+<script>
+    // Base de datos de estudiantes
+    const students = {
+        '609847': 'Diego De La Garza Fernández',
+        '595002': 'Sebastián González Alfaro',
+        '638219': 'Manuel Eugenio Aguirre Leal',
+        '599678': 'Diana Ruanova Cavazos',
+        '553536': 'Diego de la Fuente Gutiérrez',
+        '604340': 'Cesar Emilio Martinez Cueva',
+        '597186': 'Mauricio Alexis Tinajero Bobadilla',
+        '629808': 'Luis Carlos Herrera',
+        '575695': 'Jose Ramirez',
+        '190586': 'Guillermo Montaña Martínez',
+        '191564': 'Melisa Marcos Moreno',
+        '540271': 'Eduardo Martinez Roldan',
+        '542497': 'Rebeca Borrego Cavazos',
+        '552331': 'Alberto Alejandro Elizondo Avalos',
+        '557734': 'Alejandro Fernandez Palacios',
+        '560180': 'Jacobo Azamar Sanchez',
+        '568444': 'Damian Nuñez De Los Santos',
+        '568916': 'Yahir Eduardo Chepetla García',
+        '597121': 'Gabriela Loyola',
+        '600046': 'Fernando Olivares Del Valle',
+        '609158': 'Diego Garza Galicia',
+        '611511': 'Neyzer Danilo Salazar Ortega',
+        '611640': 'Fernanda Chacón Ríos',
+        '612005': 'Paula Cano Nava',
+        '612595': 'Sabrina Martinez',
+        '612940': 'Leonardo Rangel Castro',
+        '614045': 'Gabriela Sánchez Noriega',
+        '614205': 'Claudia Montserrat de la Mora Arocha',
+        '629261': 'Fernanda Guajardo',
+        '629496': 'Raul Patricio Gonzalez Lozano',
+        '631996': 'Santiago Galindo Morales',
+        '642995': 'Leonardo Duran Acosta',
+        '645569': 'Cristina Andonie Ayala',
+        '645782': 'Mario Alberto Valdés Saucedo',
+        '646310': 'Francisco Alfonso Treviño Cedillo',
+        '646721': 'Emiliano Catalan Lopez',
+        '647180': 'Rebeca Iruretagoyena Insúa',
+        '647540': 'Ricardo Valdés Mery',
+        '648930': 'Diego Emilio Muro Horta',
+        '649400': 'Luis Ernesto Calafell De León',
+        '650463': 'Daniel Salazar Cázares',
+        '650777': 'Liliana Lizeth Garza Brieño',
+        '652825': 'Manuel Reyes Vega',
+        '654294': 'Ángel Gabriel Ávila Hernández',
+        '654371': 'Juan Carlos Espinosa Gutiérrez',
+        '655999': 'Pamela Rodriguez de la Rosa',
+        '656470': 'Eduardo Toriello',
+        '656651': 'Luis Gabriel Portugal Aponte',
+        '656848': 'Aurelio Luna Núñez',
+        '581710': 'Mario Edgar Moreno Segovia',
+        '612159': 'Eduardo Tamez de la Garza',
+        '2814389': 'Alan Adelfo Del Angel Figueroa',
+        '2855676': 'Óscar Adrián Lozano Fernández',
+        '2977386': 'Aylen Rodriguez',
+        '3008663': 'Andrea Garcia Torres',
+        '3008790': 'Alberto Alain Cavazos Colunga',
+        '3013872': 'Andres Herrera Garza',
+        '3047390': 'Elier Siqueiros Aquino',
+        '3047995': 'Marcelo Alejandro Aguirre Galindo',
+        '7004266': 'Leonardo Moya Cazares',
+        '7024480': 'Ari Emiliano Cisneros Castro',
+        '7066521': 'Damariz Castro',
+        '7092925': 'Alejandro Jesús García Garza',
+        '7093862': 'Nieves Garcia',
+        '2956100': 'Alan Jair Ríos Barba'
+    };
+
+    const entradaInput = document.getElementById('entradaInput');
+    const salidaInput = document.getElementById('salidaInput');
+    const bonosInput = document.getElementById('bonosInput');
+    const sancionesInput = document.getElementById('sancionesInput');
+    const entradaList = document.getElementById('entradaList');
+    const salidaList = document.getElementById('salidaList');
+    const bonosList = document.getElementById('bonosList');
+    const sancionesList = document.getElementById('sancionesList');
+    const globalCounter = document.getElementById('globalCounter');
+    const globalCounterBtn = document.getElementById('globalCounterBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalName = document.getElementById('modalName');
+    const modalMatricula = document.getElementById('modalMatricula');
+    const modalCancel = document.getElementById('modalCancel');
+    const turnoModalOverlay = document.getElementById('turnoModalOverlay');
+    const turnoList = document.getElementById('turnoList');
+    const turnoModalCount = document.getElementById('turnoModalCount');
+    const turnoModalCancel = document.getElementById('turnoModalCancel');
+    const sancionModalOverlay = document.getElementById('sancionModalOverlay');
+    const sancionModalName = document.getElementById('sancionModalName');
+    const sancionModalMatricula = document.getElementById('sancionModalMatricula');
+    const sancionModalCancel = document.getElementById('sancionModalCancel');
+
+    let entradaRecords = [];
+    let salidaRecords = [];
+    let bonosRecords = [];
+    let sancionesRecords = [];
+    let peopleInside = new Set();
+    let currentBonoMatricula = null;
+    let currentBonoName = null;
+    let currentSancionMatricula = null;
+    let currentSancionName = null;
+
+    // Cargar datos guardados
+    function loadData() {
+        const savedEntrada = localStorage.getItem('entradaRecords');
+        const savedSalida = localStorage.getItem('salidaRecords');
+        const savedBonos = localStorage.getItem('bonosRecords');
+        const savedSanciones = localStorage.getItem('sancionesRecords');
+        const savedInside = localStorage.getItem('peopleInside');
+        
+        if (savedEntrada) entradaRecords = JSON.parse(savedEntrada);
+        if (savedSalida) salidaRecords = JSON.parse(savedSalida);
+        if (savedBonos) bonosRecords = JSON.parse(savedBonos);
+        if (savedSanciones) sancionesRecords = JSON.parse(savedSanciones);
+        if (savedInside) peopleInside = new Set(JSON.parse(savedInside));
+        
+        updateAllDisplays();
+    }
+
+    // Guardar datos
+    function saveData() {
+        localStorage.setItem('entradaRecords', JSON.stringify(entradaRecords));
+        localStorage.setItem('salidaRecords', JSON.stringify(salidaRecords));
+        localStorage.setItem('bonosRecords', JSON.stringify(bonosRecords));
+        localStorage.setItem('sancionesRecords', JSON.stringify(sancionesRecords));
+        localStorage.setItem('peopleInside', JSON.stringify([...peopleInside]));
+    }
+
+    function formatTime(date) {
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function showAlert(message, type) {
+        const alert = document.createElement('div');
+        alert.className = `alert ${type}`;
+        alert.textContent = message;
+        document.body.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 3000);
+    }
+
+    function addEntrada(matricula, name) {
+        if (peopleInside.has(matricula)) {
+            showAlert(`⚠️ ${name} ya está dentro del turno`, 'warning');
+            return;
         }
 
-        function ordenarLista() {
-            const input = document.getElementById('listaInput').value.trim();
-            
-            if (!input) {
-                mostrarMensaje('Por favor ingresa una lista de nombres y matrículas.', 'error');
-                return;
+        const now = new Date();
+        const record = {
+            number: entradaRecords.length + 1,
+            name: name,
+            matricula: matricula,
+            time: formatTime(now),
+            timestamp: now.toISOString()
+        };
+        
+        entradaRecords.unshift(record);
+        peopleInside.add(matricula);
+        
+        saveData();
+        updateAllDisplays();
+        showAlert(`✓ Entrada: ${name}`, 'success');
+    }
+
+    function addSalida(matricula, name) {
+        if (!peopleInside.has(matricula)) {
+            showAlert(`⚠️ ${name} no tiene registro de entrada`, 'warning');
+            return;
+        }
+
+        const now = new Date();
+        const record = {
+            number: salidaRecords.length + 1,
+            name: name,
+            matricula: matricula,
+            time: formatTime(now),
+            timestamp: now.toISOString()
+        };
+        
+        salidaRecords.unshift(record);
+        peopleInside.delete(matricula);
+        
+        saveData();
+        updateAllDisplays();
+        showAlert(`✓ Salida: ${name}`, 'success');
+    }
+
+    function openBonoModal(matricula, name) {
+        currentBonoMatricula = matricula;
+        currentBonoName = name;
+        modalName.textContent = name;
+        modalMatricula.textContent = `Matrícula: ${matricula}`;
+        modalOverlay.classList.add('show');
+    }
+
+    function closeBonoModal() {
+        modalOverlay.classList.remove('show');
+        currentBonoMatricula = null;
+        currentBonoName = null;
+    }
+
+    function openTurnoModal() {
+        updateTurnoModal();
+        turnoModalOverlay.classList.add('show');
+    }
+
+    function closeTurnoModal() {
+        turnoModalOverlay.classList.remove('show');
+    }
+
+    function updateTurnoModal() {
+        turnoModalCount.textContent = peopleInside.size;
+        
+        if (peopleInside.size === 0) {
+            turnoList.innerHTML = `
+                <div class="turno-empty">
+                    <div class="turno-empty-icon">👥</div>
+                    <div>No hay personal en turno</div>
+                </div>
+            `;
+        } else {
+            // Convertir Set a Array y obtener información completa
+            const peopleArray = Array.from(peopleInside).map(matricula => {
+                // Buscar la entrada más reciente de esta persona
+                const entrada = entradaRecords.find(e => e.matricula === matricula);
+                return {
+                    matricula: matricula,
+                    name: entrada ? entrada.name : students[matricula] || 'Desconocido'
+                };
+            }).sort((a, b) => a.name.localeCompare(b.name)); // Ordenar alfabéticamente
+
+            turnoList.innerHTML = peopleArray.map((person, index) => `
+                <div class="turno-item">
+                    <div class="turno-number">${index + 1}</div>
+                    <div class="turno-name">${person.name}</div>
+                    <div class="turno-matricula">${person.matricula}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function openSancionModal(matricula, name) {
+        currentSancionMatricula = matricula;
+        currentSancionName = name;
+        sancionModalName.textContent = name;
+        sancionModalMatricula.textContent = `Matrícula: ${matricula}`;
+        sancionModalOverlay.classList.add('show');
+    }
+
+    function closeSancionModal() {
+        sancionModalOverlay.classList.remove('show');
+        currentSancionMatricula = null;
+        currentSancionName = null;
+    }
+
+    function addSancion(matricula, name, tipo) {
+        const record = {
+            number: sancionesRecords.length + 1,
+            name: name,
+            matricula: matricula,
+            tipo: tipo
+        };
+        
+        sancionesRecords.unshift(record);
+        
+        saveData();
+        updateAllDisplays();
+        showAlert(`⚠️ Sanción "${tipo}" registrada para ${name}`, 'warning');
+    }
+
+    function addBono(matricula, name, tipo) {
+        const record = {
+            number: bonosRecords.length + 1,
+            name: name,
+            matricula: matricula,
+            tipo: tipo
+        };
+        
+        bonosRecords.unshift(record);
+        
+        saveData();
+        updateAllDisplays();
+        showAlert(`✓ Bono "${tipo}" asignado a ${name}`, 'success');
+    }
+
+    function updateDisplay(records, listElement, totalElement, todayElement) {
+        totalElement.textContent = records.length;
+        
+        if (todayElement) {
+            const today = new Date().toDateString();
+            const todayCount = records.filter(r => 
+                new Date(r.timestamp).toDateString() === today
+            ).length;
+            todayElement.textContent = todayCount;
+        }
+
+        if (records.length === 0) {
+            listElement.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div>Sin registros</div>
+                </div>
+            `;
+        } else {
+            listElement.innerHTML = records.map(record => `
+                <div class="record-item">
+                    <div class="record-number">${record.number}</div>
+                    <div class="record-name">${record.name}</div>
+                    <div class="record-matricula">${record.matricula}</div>
+                    <div class="record-time">${record.time}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function updateBonosDisplay() {
+        const bonosTotalElement = document.getElementById('bonosTotal');
+        const bonosHerramientasElement = document.getElementById('bonosHerramientas');
+        const bonosAcolchadoElement = document.getElementById('bonosAcolchado');
+        const bonosSimeprodeeElement = document.getElementById('bonosSimeprodee');
+        const bonosMontajeElement = document.getElementById('bonosMontaje');
+        const bonosComunicacionElement = document.getElementById('bonosComunicacion');
+        const bonosMaquinasElement = document.getElementById('bonosMaquinas');
+        const bonosListaAsistenciaElement = document.getElementById('bonosListaAsistencia');
+        const bonosCollarinesElement = document.getElementById('bonosCollarines');
+
+        bonosTotalElement.textContent = bonosRecords.length;
+        bonosHerramientasElement.textContent = bonosRecords.filter(b => b.tipo === 'herramientas').length;
+        bonosAcolchadoElement.textContent = bonosRecords.filter(b => b.tipo === 'acolchado').length;
+        bonosSimeprodeeElement.textContent = bonosRecords.filter(b => b.tipo === 'simeprodee').length;
+        bonosMontajeElement.textContent = bonosRecords.filter(b => b.tipo === 'montaje').length;
+        bonosComunicacionElement.textContent = bonosRecords.filter(b => b.tipo === 'comunicacion').length;
+        bonosMaquinasElement.textContent = bonosRecords.filter(b => b.tipo === 'maquinas').length;
+        bonosListaAsistenciaElement.textContent = bonosRecords.filter(b => b.tipo === 'lista-asistencia').length;
+        bonosCollarinesElement.textContent = bonosRecords.filter(b => b.tipo === 'collarines').length;
+
+        if (bonosRecords.length === 0) {
+            bonosList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎁</div>
+                    <div>Sin registros de bonos</div>
+                </div>
+            `;
+        } else {
+            bonosList.innerHTML = bonosRecords.map(record => `
+                <div class="record-item record-item-bonos">
+                    <div class="record-number">${record.number}</div>
+                    <div class="record-name">${record.name}</div>
+                    <div class="record-matricula">${record.matricula}</div>
+                    <div><span class="bono-badge ${record.tipo}">${record.tipo}</span></div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function updateSancionesDisplay() {
+        const sancionesTotalElement = document.getElementById('sancionesTotal');
+        const sancionesCascoElement = document.getElementById('sancionesCasco');
+        const sancionesLentesElement = document.getElementById('sancionesLentes');
+        const sancionesCredencialElement = document.getElementById('sancionesCredencial');
+        const sancionesTaponesElement = document.getElementById('sancionesTapones');
+        const sancionesChalecElement = document.getElementById('sancionesChaleco');
+        const sancionesCutterElement = document.getElementById('sancionesCutter');
+
+        sancionesTotalElement.textContent = sancionesRecords.length;
+        sancionesCascoElement.textContent = sancionesRecords.filter(s => s.tipo === 'casco').length;
+        sancionesLentesElement.textContent = sancionesRecords.filter(s => s.tipo === 'lentes').length;
+        sancionesCredencialElement.textContent = sancionesRecords.filter(s => s.tipo === 'credencial').length;
+        sancionesTaponesElement.textContent = sancionesRecords.filter(s => s.tipo === 'tapones').length;
+        sancionesChalecElement.textContent = sancionesRecords.filter(s => s.tipo === 'chaleco').length;
+        sancionesCutterElement.textContent = sancionesRecords.filter(s => s.tipo === 'cutter').length;
+
+        if (sancionesRecords.length === 0) {
+            sancionesList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <div>Sin registros de sanciones</div>
+                </div>
+            `;
+        } else {
+            sancionesList.innerHTML = sancionesRecords.map(record => `
+                <div class="record-item record-item-bonos">
+                    <div class="record-number">${record.number}</div>
+                    <div class="record-name">${record.name}</div>
+                    <div class="record-matricula">${record.matricula}</div>
+                    <div><span class="sancion-badge ${record.tipo}">${record.tipo}</span></div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function updateAllDisplays() {
+        updateDisplay(entradaRecords, entradaList, 
+            document.getElementById('entradaTotal'), 
+            document.getElementById('entradaHoy'));
+        updateDisplay(salidaRecords, salidaList, 
+            document.getElementById('salidaTotal'), 
+            document.getElementById('salidaHoy'));
+        updateBonosDisplay();
+        updateSancionesDisplay();
+        globalCounter.textContent = peopleInside.size;
+    }
+
+    // Event listeners para inputs
+    entradaInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        for (const [code, name] of Object.entries(students)) {
+            if (value.includes(code)) {
+                addEntrada(code, name);
+                this.value = '';
+                this.focus();
+                break;
             }
+        }
+    });
 
-            // Dividir por líneas
-            const lineas = input.split('\n').filter(linea => linea.trim() !== '');
-            
-            if (lineas.length === 0) {
-                mostrarMensaje('La lista está vacía.', 'error');
-                return;
+    salidaInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        for (const [code, name] of Object.entries(students)) {
+            if (value.includes(code)) {
+                addSalida(code, name);
+                this.value = '';
+                this.focus();
+                break;
             }
+        }
+    });
 
-            // Procesar cada línea
-            const datos = [];
-            let errores = 0;
+    bonosInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        for (const [code, name] of Object.entries(students)) {
+            if (value.includes(code)) {
+                this.value = '';
+                openBonoModal(code, name);
+                break;
+            }
+        }
+    });
 
-            lineas.forEach((linea, index) => {
-                let nombre, matricula;
-                
-                // Buscar la última coma para separar nombre de matrícula
-                const ultimaComa = linea.lastIndexOf(',');
-                
-                if (ultimaComa !== -1) {
-                    // Formato con coma: "Nombre, Matrícula"
-                    nombre = linea.substring(0, ultimaComa).trim();
-                    matricula = linea.substring(ultimaComa + 1).trim();
-                } else {
-                    // Formato sin coma: "Nombre Matrícula" - usar el último espacio
-                    const ultimoEspacio = linea.lastIndexOf(' ');
-                    
-                    if (ultimoEspacio === -1) {
-                        console.warn(`Línea ${index + 1} sin formato correcto: ${linea}`);
-                        errores++;
-                        return;
+    sancionesInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        for (const [code, name] of Object.entries(students)) {
+            if (value.includes(code)) {
+                this.value = '';
+                openSancionModal(code, name);
+                break;
+            }
+        }
+    });
+
+    // Event listeners para modal de bonos
+    document.querySelectorAll('.option-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const tipo = this.getAttribute('data-tipo');
+            
+            // Determinar si es bono o sanción basándose en el modal activo
+            if (modalOverlay.classList.contains('show')) {
+                addBono(currentBonoMatricula, currentBonoName, tipo);
+                closeBonoModal();
+                bonosInput.focus();
+            } else if (sancionModalOverlay.classList.contains('show')) {
+                addSancion(currentSancionMatricula, currentSancionName, tipo);
+                closeSancionModal();
+                sancionesInput.focus();
+            }
+        });
+    });
+
+    modalCancel.addEventListener('click', () => {
+        closeBonoModal();
+        bonosInput.focus();
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            closeBonoModal();
+            bonosInput.focus();
+        }
+    });
+
+    // Event listeners para modal de turno
+    globalCounterBtn.addEventListener('click', () => {
+        openTurnoModal();
+    });
+
+    turnoModalCancel.addEventListener('click', () => {
+        closeTurnoModal();
+    });
+
+    turnoModalOverlay.addEventListener('click', (e) => {
+        if (e.target === turnoModalOverlay) {
+            closeTurnoModal();
+        }
+    });
+
+    // Event listeners para modal de sanciones
+    sancionModalCancel.addEventListener('click', () => {
+        closeSancionModal();
+        sancionesInput.focus();
+    });
+
+    sancionModalOverlay.addEventListener('click', (e) => {
+        if (e.target === sancionModalOverlay) {
+            closeSancionModal();
+            sancionesInput.focus();
+        }
+    });
+
+    // Función para descargar CSV
+    function downloadCSV() {
+        // Crear un objeto para relacionar entradas con salidas por matrícula
+        const registrosCompletos = {};
+
+        // Procesar entradas
+        entradaRecords.forEach(entrada => {
+            if (!registrosCompletos[entrada.matricula]) {
+                registrosCompletos[entrada.matricula] = [];
+            }
+            registrosCompletos[entrada.matricula].push({
+                nombre: entrada.name,
+                matricula: entrada.matricula,
+                horaEntrada: entrada.time,
+                timestampEntrada: new Date(entrada.timestamp),
+                horaSalida: ''
+            });
+        });
+
+        // Procesar salidas y emparejarlas con entradas
+        salidaRecords.forEach(salida => {
+            if (registrosCompletos[salida.matricula]) {
+                const registros = registrosCompletos[salida.matricula];
+                for (let i = registros.length - 1; i >= 0; i--) {
+                    if (!registros[i].horaSalida) {
+                        const timestampSalida = new Date(salida.timestamp);
+                        if (timestampSalida >= registros[i].timestampEntrada) {
+                            registros[i].horaSalida = salida.time;
+                            break;
+                        }
                     }
-                    
-                    nombre = linea.substring(0, ultimoEspacio).trim();
-                    matricula = linea.substring(ultimoEspacio + 1).trim();
                 }
-
-                if (nombre && matricula) {
-                    datos.push({
-                        nombre: nombre,
-                        matriculaOriginal: matricula,
-                        matriculaNumero: extraerNumeroMatricula(matricula)
-                    });
-                }
-            });
-
-            if (datos.length === 0) {
-                mostrarMensaje('No se encontraron datos válidos en el formato correcto.', 'error');
-                return;
             }
+        });
 
-            // Ordenar por número de matrícula
-            datosOrdenados = datos.sort((a, b) => a.matriculaNumero - b.matriculaNumero);
+        // Crear CSV
+        let csvContent = 'Nombre,Matrícula,Hora Entrada,Hora Salida\n';
 
-            // Mostrar resultados
-            mostrarResultados(datosOrdenados);
-            mostrarEstadisticas(datosOrdenados);
+        // Aplanar el objeto y ordenar por hora de entrada
+        const todosLosRegistros = [];
+        for (const matricula in registrosCompletos) {
+            todosLosRegistros.push(...registrosCompletos[matricula]);
+        }
+        todosLosRegistros.sort((a, b) => b.timestampEntrada - a.timestampEntrada);
+
+        // Agregar filas de entrada/salida al CSV
+        todosLosRegistros.forEach(registro => {
+            csvContent += `"${registro.nombre}","${registro.matricula}","${registro.horaEntrada}","${registro.horaSalida}"\n`;
+        });
+
+        // Agregar sección de bonos
+        if (bonosRecords.length > 0) {
+            csvContent += '\n\nBONOS\n';
+            csvContent += 'Nombre,Matrícula,Tipo de Bono\n';
             
-            if (errores > 0) {
-                mostrarMensaje(`Lista ordenada exitosamente. ${errores} línea(s) ignorada(s) por formato incorrecto.`, 'exito');
-            } else {
-                mostrarMensaje('¡Lista ordenada exitosamente!', 'exito');
-            }
-        }
-
-        function mostrarResultados(datos) {
-            const resultadoDiv = document.getElementById('resultado');
-            
-            let tablaHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Matrícula</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            datos.forEach((item) => {
-                tablaHTML += `
-                    <tr>
-                        <td class="col-nombre">${item.nombre}</td>
-                        <td class="col-matricula">${item.matriculaOriginal}</td>
-                    </tr>
-                `;
-            });
-
-            tablaHTML += `
-                    </tbody>
-                </table>
-            `;
-
-            resultadoDiv.innerHTML = tablaHTML;
-            document.getElementById('outputSection').style.display = 'block';
-        }
-
-        function mostrarEstadisticas(datos) {
-            if (datos.length === 0) return;
-
-            document.getElementById('totalEstudiantes').textContent = datos.length;
-            document.getElementById('statsSection').style.display = 'flex';
-        }
-
-        function copiarResultado() {
-            const texto = datosOrdenados
-                .map(item => `${item.nombre}, ${item.matriculaOriginal}`)
-                .join('\n');
-
-            navigator.clipboard.writeText(texto).then(() => {
-                mostrarMensaje('¡Resultado copiado al portapapeles!', 'exito');
-            }).catch(err => {
-                mostrarMensaje('Error al copiar al portapapeles.', 'error');
+            bonosRecords.forEach(bono => {
+                csvContent += `"${bono.name}","${bono.matricula}","${bono.tipo}"\n`;
             });
         }
 
-        function limpiarCampos() {
-            document.getElementById('listaInput').value = '';
-            document.getElementById('resultado').innerHTML = '';
-            document.getElementById('outputSection').style.display = 'none';
-            document.getElementById('statsSection').style.display = 'none';
-            document.getElementById('mensaje').style.display = 'none';
-            datosOrdenados = [];
+        // Agregar sección de sanciones
+        if (sancionesRecords.length > 0) {
+            csvContent += '\n\nSANCIONES\n';
+            csvContent += 'Nombre,Matrícula,Tipo de Sanción\n';
+            
+            sancionesRecords.forEach(sancion => {
+                csvContent += `"${sancion.name}","${sancion.matricula}","${sancion.tipo}"\n`;
+            });
         }
 
-        function mostrarMensaje(texto, tipo) {
-            const mensajeDiv = document.getElementById('mensaje');
-            mensajeDiv.textContent = texto;
-            mensajeDiv.className = `mensaje ${tipo}`;
-            mensajeDiv.style.display = 'block';
+        // Crear blob y descargar
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        const now = new Date();
+        const fecha = now.toISOString().split('T')[0];
+        const hora = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+        const filename = `asistencia_${fecha}_${hora}.csv`;
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-            setTimeout(() => {
-                mensajeDiv.style.display = 'none';
-            }, 5000);
+        showAlert('✓ Archivo CSV descargado correctamente', 'success');
+    }
+
+    // Botón de descarga
+    document.getElementById('downloadButton').addEventListener('click', () => {
+        if (entradaRecords.length === 0 && salidaRecords.length === 0 && bonosRecords.length === 0 && sancionesRecords.length === 0) {
+            showAlert('⚠️ No hay registros para descargar', 'warning');
+            return;
         }
-    </script>
+        downloadCSV();
+    });
+
+    // Botón de limpiar todo
+    document.getElementById('clearAllButton').addEventListener('click', () => {
+        if (confirm('¿Estás seguro de que quieres eliminar TODOS los registros?')) {
+            entradaRecords = [];
+            salidaRecords = [];
+            bonosRecords = [];
+            sancionesRecords = [];
+            peopleInside = new Set();
+            localStorage.clear();
+            updateAllDisplays();
+            showAlert('✓ Todos los registros eliminados', 'success');
+        }
+    });
+
+    // Cargar datos al iniciar
+    loadData();
+</script>
+```
+
 </body>
 </html>
